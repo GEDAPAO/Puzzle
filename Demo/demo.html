@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>九宫格拼图</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .box{
+            width: 300px;
+            height:300px;
+            border: 1px solid lightblue;
+            position: relative;
+        }
+        .box div{
+            width: 100px;
+            height:100px;
+            background: lightblue;
+            text-align: center;
+            line-height: 100px;
+            position: absolute;
+            color: white;
+            font-size: 40px;
+            top: 0;
+            left: 0;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .box span{
+            width: 100px;
+            height: 100px;
+            background: transparent;
+            position: absolute;
+            left: 200px;
+            top: 200px;
+        }
+        .btnAgain{
+            width: 80px;
+            height:30px;
+            background: lightblue;
+            color:white;
+            font-size: 15px;
+            border: none;
+            outline: none;
+            margin-top: 10px;
+        }
+        .bushu{
+            height: 30px;
+            position: absolute;
+            left: 85px;
+            top: 310px;
+            margin-top: 5px;
+            color: lightblue;
+            font-size: 20px;
+            line-height: 30px;
+            margin-left: 20px;
+        }
+        .bushu span{
+            display: inline-block;
+            color: red;
+            width: 50px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="box">
+    <div>1</div>
+    <div>2</div>
+    <div>3</div>
+    <div>4</div>
+    <div>5</div>
+    <div>6</div>
+    <div>7</div>
+    <div>8</div>
+    <span></span>
+</div>
+<button class="btnAgain">重新开始</button>
+<div class="bushu">一共用了<span>0</span>步</div>
+</body>
+<script>
+    //随机函数
+    function random(m,n){
+        var num=Math.max(m,n)-Math.min(m,n);
+        return Math.round(Math.random()*num+Math.min(m,n));
+    }
+    var div = document.querySelectorAll('.box div');
+    var span=document.querySelector(".box span");
+    var bushu=document.querySelector(".bushu span");
+    //定义一个布尔值，用来判断拼图成功
+    var isUp=true;
+    var timer=null;
+    var num=0;
+
+    var arr2 = [[0, 0], [100, 0], [200, 0], [0, 100], [100, 100], [200, 100], [0, 200], [100, 200]];
+
+    //随机位置
+    function again() {
+        var arr = [[0, 0], [100, 0], [200, 0], [0, 100], [100, 100], [200, 100], [0, 200], [100, 200]];
+        span.style.left=200+'px';
+        span.style.top=200+'px';
+        for (let i = 0; i < div.length; i++) {
+            var num = random(0, arr.length - 1);
+            div[i].style.left = arr[num][0] + 'px';
+            div[i].style.top = arr[num][1] + 'px';
+            arr.splice(num, 1);
+        }
+    }
+
+
+    //位置的移动
+    function move(){
+        for(let i=0;i<div.length;i++){
+            div[i].onclick=function(){
+                isUp=true;
+                var left=span.offsetLeft;
+                var top=span.offsetTop;
+                if(this.offsetLeft==left&&Math.abs(this.offsetTop-top)==100 || this.offsetTop==top&&Math.abs(this.offsetLeft-left)==100){
+
+                    num++;
+                    bushu.innerHTML=num;
+
+                    span.style.left=this.offsetLeft+'px';
+                    span.style.top=this.offsetTop+'px';
+                    this.style.left=left+'px';
+                    this.style.top=top+'px';
+
+                    timer=setTimeout(function () {
+                        for(let i=0;i<div.length;i++){
+                            if(div[i].offsetLeft==arr2[i][0]&&div[i].offsetTop==arr2[i][1]){
+                                continue;
+                            }else{
+                                isUp=false;
+                            }
+                        }
+                        if(isUp){
+                            alert("恭喜你，过关了");
+                        }
+                    },200);
+                }
+            }
+        }
+    }
+
+    var btnAgain=document.querySelector(".btnAgain");
+    btnAgain.onclick=function(){
+        again();
+        num=0;
+        bushu.innerHTML=num;
+    }
+    again();
+    move();
+</script>
+</html>
